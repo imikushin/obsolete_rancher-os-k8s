@@ -264,7 +264,7 @@ func NewConfig() *Config {
 							"--privileged " +
 							"--volumes-from=command-volumes " +
 							"--volumes-from=system-volumes " +
-							"k8s " +
+							"kubernetes " +
 							"/kube-apiserver " +
 							"--address=0.0.0.0 --port=8080 " +
 							"--portal_net=10.100.0.0/16 " +
@@ -283,7 +283,7 @@ func NewConfig() *Config {
 						"--privileged " +
 						"--volumes-from=command-volumes " +
 						"--volumes-from=system-volumes " +
-						"k8s " +
+						"kubernetes " +
 						"/kube-controller-manager " +
 						"--master=127.0.0.1:8080 " +
 						"--logtostderr=true",
@@ -299,7 +299,7 @@ func NewConfig() *Config {
 						"--privileged " +
 						"--volumes-from=command-volumes " +
 						"--volumes-from=system-volumes " +
-						"k8s " +
+						"kubernetes " +
 						"/kube-scheduler " +
 						"--master=127.0.0.1:8080 " +
 						"--logtostderr=true",
@@ -319,7 +319,7 @@ func NewConfig() *Config {
 						"--privileged " +
 						"--volumes-from=command-volumes " +
 						"--volumes-from=system-volumes " +
-						"k8s " +
+						"kubernetes " +
 						"/kube-proxy " +
 						"--etcd_servers=http://172.17.7.101:4001 " +
 						"--logtostderr=true",
@@ -335,12 +335,8 @@ func NewConfig() *Config {
 						"--privileged " +
 						"--volumes-from=command-volumes " +
 						"--volumes-from=system-volumes " +
-						"k8s " +
-						"/kubelet " +
-						"--address=0.0.0.0 --port=10250 " +
-						"--hostname_override=$public_ipv4 " + //FIXME replace $public_ipv4 with the node IP
-						"--api_servers=172.17.7.101:8080 " +
-						"--logtostderr=true",
+						"kubernetes " +
+						"/kubelet.sh",
 					},
 				},
 			},

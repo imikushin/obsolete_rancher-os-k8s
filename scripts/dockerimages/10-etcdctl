@@ -1,0 +1,3 @@
+FROM debian:7.8
+COPY scripts/dockerimages/tmp/etcd_dist/etcdctl /
+ENTRYPOINT ["/etcdctl"]

@@ -1,0 +1,23 @@
+#!/bin/bash
+set -e
+set -x
+
+cd $(dirname $0)/..
+
+etcd_v="v2.0.4"
+etcd_dist="etcd-${etcd_v}-linux-amd64"
+mkdir -p scripts/dockerimages/tmp
+if [[ ! -d ./scripts/dockerimages/tmp/etcd_dist ]]; then
+  cd scripts/dockerimages/tmp
+  curl -L  https://github.com/coreos/etcd/releases/download/${etcd_v}/${etcd_dist}.tar.gz -o ${etcd_dist}.tar.gz
+  tar -xzf ${etcd_dist}.tar.gz
+  mv ${etcd_dist} etcd_dist
+  rm ${etcd_dist}.tar.gz
+  cd ../../..
+fi
+if [[ ! -f ./scripts/dockerimages/tmp/flannel/flannel ]]; then
+  mkdir -p scripts/dockerimages/tmp/flannel
+  docker run -i -t google/golang /bin/bash -c "go get github.com/coreos/flannel"
+  docker cp `docker ps -lq`:/gopath/bin/flannel scripts/dockerimages/tmp/flannel/
+  docker rm `docker ps -lq`
+fi

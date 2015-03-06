@@ -155,7 +155,7 @@ func NewConfig() *Config {
 					"console",
 			},
 		},
-		EnabledAddons: []string{},
+		EnabledAddons: []string{/*"ubuntu-console", "etcd", "flannel", "k8s-docker"*/},
 		Addons: map[string]Config{
 			"ubuntu-console": {
 				SystemContainers: []ContainerConfig{
@@ -173,6 +173,67 @@ func NewConfig() *Config {
 							"--net=host " +
 							"--pid=host " +
 							"rancher/ubuntuconsole:v0.0.2",
+					},
+				},
+			},
+			"etcd": {
+				SystemContainers: []ContainerConfig{
+					{
+						Id: "etcd",
+						Cmd: "--name=etcd " +
+							"-d " +
+							"--restart=always " +
+							"--net=host " +
+							"quay.io/coreos/etcd:v2.0.4 " +
+							"--listen-client-urls 'http://0.0.0.0:2379,http://0.0.0.0:4001'",
+					},
+				},
+			},
+			"flannel": {
+				SystemContainers: []ContainerConfig{
+					{
+						Id: "flannel",
+						Cmd: "--name=flannel " +
+							"-d " +
+							"--rm " +
+							"--restart=always " +
+							"--ipc=host " +
+							"--pid=host " +
+							"--net=host " +
+							"--privileged " +
+							"--volumes-from=command-volumes " +
+							"--volumes-from=system-volumes " +
+							"flannel",
+					},
+				},
+			},
+			"k8s-docker": {
+				SystemContainers: []ContainerConfig{
+					{
+						Id: "stopuserdocker",
+						Cmd: "--rm " +
+							"--ipc=host " +
+							"--pid=host " +
+							"--net=host " +
+							"--privileged " +
+							"--volumes-from=command-volumes " +
+							"--volumes-from=system-volumes " +
+							"stopuserdocker",
+					},
+					{
+						Id: "k8s-docker",
+						Cmd: "--name=k8s-docker " +
+							"-d " +
+							"--restart=always " +
+							"--ipc=host " +
+							"--pid=host " +
+							"--net=host " +
+							"--privileged " +
+							"--volumes-from=command-volumes " +
+							"--volumes-from=user-volumes " +
+							"--volumes-from=system-volumes " +
+							"-v=/var/lib/rancher/state/docker:/var/lib/docker " +
+							"k8s-docker",
 					},
 				},
 			},

@@ -155,7 +155,7 @@ func NewConfig() *Config {
 					"console",
 			},
 		},
-		EnabledAddons: []string{/*"ubuntu-console", "etcd", "flannel", "k8s-docker"*/},
+		EnabledAddons: []string{/*"ubuntu-console", "etcd", "flannel-conf", "flannel", "k8s-docker", "k8s-master", "k8s-minion"*/},
 		Addons: map[string]Config{
 			"ubuntu-console": {
 				SystemContainers: []ContainerConfig{
@@ -186,6 +186,20 @@ func NewConfig() *Config {
 							"--net=host " +
 							"quay.io/coreos/etcd:v2.0.4 " +
 							"--listen-client-urls 'http://0.0.0.0:2379,http://0.0.0.0:4001'",
+					},
+				},
+			},
+			"flannel-conf": {
+				SystemContainers: []ContainerConfig{
+					{
+						Id: "flannel-conf",
+						Cmd: "--name=flannel-conf " +
+							"--rm " +
+							"--net=host " +
+							"--volumes-from=command-volumes " +
+							"--volumes-from=system-volumes " +
+							"etcdctl " +
+							"mk /coreos.com/network/config '{\"Network\":\"10.244.0.0/16\", \"Backend\": {\"Type\": \"vxlan\"}}'",
 					},
 				},
 			},
@@ -234,6 +248,99 @@ func NewConfig() *Config {
 							"--volumes-from=system-volumes " +
 							"-v=/var/lib/rancher/state/docker:/var/lib/docker " +
 							"k8s-docker",
+					},
+				},
+			},
+			"k8s-master": {
+				SystemContainers: []ContainerConfig{
+					{
+						Id: "kube-apiserver",
+						Cmd: "--name=kube-apiserver " +
+							"-d " +
+							"--restart=always " +
+							"--ipc=host " +
+							"--pid=host " +
+							"--net=host " +
+							"--privileged " +
+							"--volumes-from=command-volumes " +
+							"--volumes-from=system-volumes " +
+							"k8s " +
+							"/kube-apiserver " +
+							"--address=0.0.0.0 --port=8080 " +
+							"--portal_net=10.100.0.0/16 " +
+							"--etcd_servers=http://127.0.0.1:4001 " +
+							"--public_address_override=172.17.7.101 " +
+							"--logtostderr=true",
+					},
+					{
+						Id: "kube-controller-manager",
+						Cmd: "--name=kube-controller-manager " +
+						"-d " +
+						"--restart=always " +
+						"--ipc=host " +
+						"--pid=host " +
+						"--net=host " +
+						"--privileged " +
+						"--volumes-from=command-volumes " +
+						"--volumes-from=system-volumes " +
+						"k8s " +
+						"/kube-controller-manager " +
+						"--master=127.0.0.1:8080 " +
+						"--logtostderr=true",
+					},
+					{
+						Id: "kube-scheduler",
+						Cmd: "--name=kube-scheduler " +
+						"-d " +
+						"--restart=always " +
+						"--ipc=host " +
+						"--pid=host " +
+						"--net=host " +
+						"--privileged " +
+						"--volumes-from=command-volumes " +
+						"--volumes-from=system-volumes " +
+						"k8s " +
+						"/kube-scheduler " +
+						"--master=127.0.0.1:8080 " +
+						"--logtostderr=true",
+					},
+				},
+			},
+			"k8s-minion": {
+				SystemContainers: []ContainerConfig{
+					{
+						Id: "kube-proxy",
+						Cmd: "--name=kube-proxy " +
+						"-d " +
+						"--restart=always " +
+						"--ipc=host " +
+						"--pid=host " +
+						"--net=host " +
+						"--privileged " +
+						"--volumes-from=command-volumes " +
+						"--volumes-from=system-volumes " +
+						"k8s " +
+						"/kube-proxy " +
+						"--etcd_servers=http://172.17.7.101:4001 " +
+						"--logtostderr=true",
+					},
+					{
+						Id: "kubelet",
+						Cmd: "--name=kubelet " +
+						"-d " +
+						"--restart=always " +
+						"--ipc=host " +
+						"--pid=host " +
+						"--net=host " +
+						"--privileged " +
+						"--volumes-from=command-volumes " +
+						"--volumes-from=system-volumes " +
+						"k8s " +
+						"/kubelet " +
+						"--address=0.0.0.0 --port=10250 " +
+						"--hostname_override=$public_ipv4 " + //FIXME replace $public_ipv4 with the node IP
+						"--api_servers=172.17.7.101:8080 " +
+						"--logtostderr=true",
 					},
 				},
 			},

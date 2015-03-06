@@ -1,4 +1,3 @@
 #!/bin/sh
 
-/usr/bin/system-docker run --rm --net=host etcdctl mk /coreos.com/network/config '{"Network":"10.244.0.0/16", "Backend": {"Type": "vxlan"}}'
-/flannel --iface=eth1
+exec /flannel --etcd-endpoints="172.17.7.101:4001" --iface=eth1

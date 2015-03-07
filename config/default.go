@@ -247,7 +247,7 @@ func NewConfig() *Config {
 							"--volumes-from=user-volumes " +
 							"--volumes-from=system-volumes " +
 							"-v=/var/lib/rancher/state/docker:/var/lib/docker " +
-							"k8s-docker",
+							"k8sdocker",
 					},
 				},
 			},

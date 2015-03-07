@@ -1,6 +1,5 @@
 #!/bin/bash
-
-set -e
+set -x -e
 
 cd $(dirname $0)/..
 : RANCHER_ISO=${RANCHER_ISO:="./dist/artifacts/rancheros.iso"}

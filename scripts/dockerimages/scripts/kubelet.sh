@@ -1,4 +1,5 @@
 #!/bin/sh
+set -x -e
 
 public_ipv4=`ip -f inet -o addr show dev eth1 | awk 'gsub(/\/[0-9]+/,""){print $4}'`
 

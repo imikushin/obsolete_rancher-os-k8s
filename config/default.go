@@ -199,7 +199,7 @@ func NewConfig() *Config {
 							"--volumes-from=command-volumes " +
 							"--volumes-from=system-volumes " +
 							"etcdctl " +
-							"mk /coreos.com/network/config '{\"Network\":\"10.244.0.0/16\", \"Backend\": {\"Type\": \"vxlan\"}}'",
+							"set /coreos.com/network/config '{\"Network\":\"10.244.0.0/16\", \"Backend\": {\"Type\": \"vxlan\"}}'",
 					},
 				},
 			},

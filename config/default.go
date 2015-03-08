@@ -196,10 +196,8 @@ func NewConfig() *Config {
 						Cmd: "--name=flannel-conf " +
 							"--rm " +
 							"--net=host " +
-							"--volumes-from=command-volumes " +
-							"--volumes-from=system-volumes " +
-							"etcdctl " +
-							"set /coreos.com/network/config '{\"Network\":\"10.244.0.0/16\", \"Backend\": {\"Type\": \"vxlan\"}}'",
+							"flannel " +
+							"/flannel-conf.sh",
 					},
 				},
 			},
